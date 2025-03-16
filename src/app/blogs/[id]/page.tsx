@@ -1,18 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import Head from "next/head";
 
-// Define the type for parameters
+// Define the type for the parameters
 type Params = {
     id: string;
 };
 
-// Fetch the blog data
-async function fetchBlogs(id: number) {
+// Fetch blog data
+async function fetchBlog(id: number) {
     const options = {
         headers: {
-            Authorization: `Bearer ${process.env.API_TOKEN}`, // Ensure your API token is valid
+            Authorization: `Bearer ${process.env.API_TOKEN}`, // Ensure API token is valid
         },
     };
 
@@ -26,7 +25,7 @@ async function fetchBlogs(id: number) {
         }
 
         const response = await res.json();
-        return response.data[0]; // Return the first matching object
+        return response.data[0]; // Return the first matching blog entry
     } catch (error) {
         console.error("Error fetching blog data:", error);
         return null;
@@ -46,7 +45,7 @@ const Page = async ({ params }: { params: Params }) => {
         );
     }
 
-    const blog = await fetchBlogs(numericId);
+    const blog = await fetchBlog(numericId);
 
     if (!blog) {
         return (
@@ -58,7 +57,6 @@ const Page = async ({ params }: { params: Params }) => {
 
     const { Title, Date: headerDate, Description, BlogImage } = blog;
 
-    // Format the date properly
     const formattedDate = headerDate
         ? new Date(headerDate).toLocaleDateString("en-US", {
               year: "numeric",
@@ -73,10 +71,10 @@ const Page = async ({ params }: { params: Params }) => {
 
     return (
         <>
-            <Head>
+            <head>
                 <title>{Title} | Blog</title>
                 <meta name="description" content={Description || "Blog details"} />
-            </Head>
+            </head>
 
             <div className="bg-[#090017] h-screen text-white">
                 <div className="max-w-3xl mx-auto p-4">
