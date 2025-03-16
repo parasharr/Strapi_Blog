@@ -1,17 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
 
-// Define the type for the parameters
 type Params = {
     id: string;
 };
 
-// Fetch blog data
 async function fetchBlog(id: number) {
     const options = {
         headers: {
-            Authorization: `Bearer ${process.env.API_TOKEN}`, // Ensure API token is valid
+            Authorization: `Bearer ${process.env.API_TOKEN}`, // Ensure the API token is valid
         },
     };
 
@@ -70,39 +67,32 @@ const Page = async ({ params }: { params: Params }) => {
         : "/placeholder-image.jpg";
 
     return (
-        <>
-            <head>
-                <title>{Title} | Blog</title>
-                <meta name="description" content={Description || "Blog details"} />
-            </head>
+        <div className="bg-[#090017] h-screen text-white">
+            <div className="max-w-3xl mx-auto p-4">
+                <Link href={"/"} className="text-xl mt-10">
+                    {"< Back"}
+                </Link>
 
-            <div className="bg-[#090017] h-screen text-white">
-                <div className="max-w-3xl mx-auto p-4">
-                    <Link href={"/"} className="text-xl mt-10">
-                        {"< Back"}
-                    </Link>
+                <div className="relative w-full h-96 overflow-hidden rounded-lg mt-5">
+                    <Image
+                        src={imageURL}
+                        layout="fill"
+                        objectFit="cover"
+                        placeholder="blur"
+                        blurDataURL="/placeholder-image.jpg"
+                        alt={Title || "Blog Image"}
+                    />
+                </div>
 
-                    <div className="relative w-full h-96 overflow-hidden rounded-lg mt-5">
-                        <Image
-                            src={imageURL}
-                            layout="fill"
-                            objectFit="cover"
-                            placeholder="blur"
-                            blurDataURL="/placeholder-image.jpg"
-                            alt={Title || "Blog Image"}
-                        />
-                    </div>
-
-                    <div className="mt-4">
-                        <h1 className="text-3xl font-semibold">{Title}</h1>
-                        <p className="text-gray-400 mt-2">{Description}</p>
-                        <div className="mt-4 flex items-center text-gray-400">
-                            <span className="text-sm">Published on {formattedDate}</span>
-                        </div>
+                <div className="mt-4">
+                    <h1 className="text-3xl font-semibold">{Title}</h1>
+                    <p className="text-gray-400 mt-2">{Description}</p>
+                    <div className="mt-4 flex items-center text-gray-400">
+                        <span className="text-sm">Published on {formattedDate}</span>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
