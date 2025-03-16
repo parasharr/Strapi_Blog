@@ -1,9 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import Head from "next/head";
+
+// Define the type for parameters
+type Params = {
+    id: string;
+};
 
 // Fetch the blog data
-async function fetchBlogs(id : number) {
+async function fetchBlogs(id: number) {
     const options = {
         headers: {
             Authorization: `Bearer ${process.env.API_TOKEN}`, // Ensure your API token is valid
@@ -11,7 +17,6 @@ async function fetchBlogs(id : number) {
     };
 
     try {
-        // Use the new filters query parameter to fetch by id
         const url = `http://127.0.0.1:1337/api/blogs?filters[id][$eq]=${id}&populate=*`;
         console.log("Fetching from URL:", url);
 
@@ -28,20 +33,29 @@ async function fetchBlogs(id : number) {
     }
 }
 
+const Page = async ({ params }: { params: Params }) => {
+    const { id } = params;
+    const numericId = Number(id);
 
-const Page = async ({ params }: any) => {
-    const { id } = params; // Extract ID from dynamic route
-    const blog = await fetchBlogs(Number(id)); // Ensure ID is a number
-
-    if (!blog) {
+    if (!Number.isInteger(numericId)) {
+        console.error("Invalid ID format");
         return (
             <div className="bg-black h-screen text-white flex justify-center items-center">
-                <p>Unable to load blog data.</p>
+                <p>Invalid blog ID provided.</p>
             </div>
         );
     }
 
-    // Destructure the blog data
+    const blog = await fetchBlogs(numericId);
+
+    if (!blog) {
+        return (
+            <div className="bg-black h-screen text-white flex justify-center items-center">
+                <p>Unable to load blog data. Please try again later.</p>
+            </div>
+        );
+    }
+
     const { Title, Date: headerDate, Description, BlogImage } = blog;
 
     // Format the date properly
@@ -51,19 +65,18 @@ const Page = async ({ params }: any) => {
               month: "long",
               day: "numeric",
           })
-        : "Unknown Date";
+        : "Date not available";
 
-    // Define image URL with a placeholder fallback
     const imageURL = BlogImage?.formats?.large?.url
         ? `http://127.0.0.1:1337${BlogImage.formats.large.url}`
         : "/placeholder-image.jpg";
 
     return (
         <>
-            <h1>
+            <Head>
                 <title>{Title} | Blog</title>
                 <meta name="description" content={Description || "Blog details"} />
-            </h1>
+            </Head>
 
             <div className="bg-[#090017] h-screen text-white">
                 <div className="max-w-3xl mx-auto p-4">
@@ -71,7 +84,6 @@ const Page = async ({ params }: any) => {
                         {"< Back"}
                     </Link>
 
-                    {/* Blog image */}
                     <div className="relative w-full h-96 overflow-hidden rounded-lg mt-5">
                         <Image
                             src={imageURL}
@@ -83,7 +95,6 @@ const Page = async ({ params }: any) => {
                         />
                     </div>
 
-                    {/* Blog content */}
                     <div className="mt-4">
                         <h1 className="text-3xl font-semibold">{Title}</h1>
                         <p className="text-gray-400 mt-2">{Description}</p>

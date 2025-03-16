@@ -1,9 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import Head from "next/head";
 
-// Fetch the blog data
-async function fetchPopular(id : number) {
+// Define the type for parameters
+type Params = {
+    id: string;
+};
+
+// Fetch the popular data
+async function fetchPopular(id: number) {
     const options = {
         headers: {
             Authorization: `Bearer ${process.env.API_TOKEN}`, // Ensure your API token is valid
@@ -11,7 +17,6 @@ async function fetchPopular(id : number) {
     };
 
     try {
-        // Use the new filters query parameter to fetch by id
         const url = `http://127.0.0.1:1337/api/populars?filters[id][$eq]=${id}&populate=*`;
         console.log("Fetching from URL:", url);
 
@@ -23,25 +28,35 @@ async function fetchPopular(id : number) {
         const response = await res.json();
         return response.data[0]; // Return the first matching object
     } catch (error) {
-        console.error("Error fetching blog data:", error);
+        console.error("Error fetching popular data:", error);
         return null;
     }
 }
 
+const Page = async ({ params }: { params: Params }) => {
+    const { id } = params;
+    const numericId = Number(id);
 
-const Page = async ({ params }: any) => {
-    const { id } = params; // Extract ID from dynamic route
-    const pop = await fetchPopular(Number(id)); // Ensure ID is a number
-
-    if (!pop) {
+    // Validate ID format
+    if (!Number.isInteger(numericId)) {
+        console.error("Invalid ID format");
         return (
             <div className="bg-black h-screen text-white flex justify-center items-center">
-                <p>Unable to load blog data.</p>
+                <p>Invalid popular ID provided.</p>
             </div>
         );
     }
 
-    // Destructure the blog data
+    const pop = await fetchPopular(numericId);
+
+    if (!pop) {
+        return (
+            <div className="bg-black h-screen text-white flex justify-center items-center">
+                <p>Unable to load popular data. Please try again later.</p>
+            </div>
+        );
+    }
+
     const { Title, Date: headerDate, Metadesc, PopularImage } = pop;
 
     // Format the date properly
@@ -51,7 +66,7 @@ const Page = async ({ params }: any) => {
               month: "long",
               day: "numeric",
           })
-        : "Unknown Date";
+        : "Date not available";
 
     // Define image URL with a placeholder fallback
     const imageURL = PopularImage?.formats?.large?.url
@@ -60,10 +75,10 @@ const Page = async ({ params }: any) => {
 
     return (
         <>
-            <h1>
-                <title>{Title} | Blog</title>
-                <meta name="description" content={Metadesc || "Blog details"} />
-            </h1>
+            <Head>
+                <title>{Title} | Popular</title>
+                <meta name="description" content={Metadesc || "Popular details"} />
+            </Head>
 
             <div className="bg-[#090017] h-screen text-white">
                 <div className="max-w-3xl mx-auto p-4">
@@ -71,7 +86,7 @@ const Page = async ({ params }: any) => {
                         {"< Back"}
                     </Link>
 
-                    {/* Blog image */}
+                    {/* Popular image */}
                     <div className="relative w-full h-96 overflow-hidden rounded-lg mt-5">
                         <Image
                             src={imageURL}
@@ -79,11 +94,11 @@ const Page = async ({ params }: any) => {
                             objectFit="cover"
                             placeholder="blur"
                             blurDataURL="/placeholder-image.jpg"
-                            alt={Title || "Blog Image"}
+                            alt={Title || "Popular Image"}
                         />
                     </div>
 
-                    {/* Blog content */}
+                    {/* Popular content */}
                     <div className="mt-4">
                         <h1 className="text-3xl font-semibold">{Title}</h1>
                         <p className="text-gray-400 mt-2">{Metadesc}</p>
