@@ -1,14 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 
-type Params = {
-    id: string;
-};
+// Define the type for the params object
+interface Params {
+    id: string; // Ensure 'id' is a string type
+}
 
+// Fetch blog data
 async function fetchBlog(id: number) {
     const options = {
         headers: {
-            Authorization: `Bearer ${process.env.API_TOKEN}`, // Ensure the API token is valid
+            Authorization: `Bearer ${process.env.API_TOKEN}`, // Ensure your API token is valid
         },
     };
 
@@ -22,7 +24,7 @@ async function fetchBlog(id: number) {
         }
 
         const response = await res.json();
-        return response.data[0]; // Return the first matching blog entry
+        return response.data[0]; // Return the first blog entry
     } catch (error) {
         console.error("Error fetching blog data:", error);
         return null;
@@ -30,11 +32,10 @@ async function fetchBlog(id: number) {
 }
 
 const Page = async ({ params }: { params: Params }) => {
-    const { id } = params;
+    const { id } = params; // Extract the dynamic ID
     const numericId = Number(id);
 
     if (!Number.isInteger(numericId)) {
-        console.error("Invalid ID format");
         return (
             <div className="bg-black h-screen text-white flex justify-center items-center">
                 <p>Invalid blog ID provided.</p>
@@ -67,32 +68,39 @@ const Page = async ({ params }: { params: Params }) => {
         : "/placeholder-image.jpg";
 
     return (
-        <div className="bg-[#090017] h-screen text-white">
-            <div className="max-w-3xl mx-auto p-4">
-                <Link href={"/"} className="text-xl mt-10">
-                    {"< Back"}
-                </Link>
+        <>
+            <head>
+                <title>{Title} | Blog</title>
+                <meta name="description" content={Description || "Blog details"} />
+            </head>
 
-                <div className="relative w-full h-96 overflow-hidden rounded-lg mt-5">
-                    <Image
-                        src={imageURL}
-                        layout="fill"
-                        objectFit="cover"
-                        placeholder="blur"
-                        blurDataURL="/placeholder-image.jpg"
-                        alt={Title || "Blog Image"}
-                    />
-                </div>
+            <div className="bg-[#090017] h-screen text-white">
+                <div className="max-w-3xl mx-auto p-4">
+                    <Link href={"/"} className="text-xl mt-10">
+                        {"< Back"}
+                    </Link>
 
-                <div className="mt-4">
-                    <h1 className="text-3xl font-semibold">{Title}</h1>
-                    <p className="text-gray-400 mt-2">{Description}</p>
-                    <div className="mt-4 flex items-center text-gray-400">
-                        <span className="text-sm">Published on {formattedDate}</span>
+                    <div className="relative w-full h-96 overflow-hidden rounded-lg mt-5">
+                        <Image
+                            src={imageURL}
+                            layout="fill"
+                            objectFit="cover"
+                            placeholder="blur"
+                            blurDataURL="/placeholder-image.jpg"
+                            alt={Title || "Blog Image"}
+                        />
+                    </div>
+
+                    <div className="mt-4">
+                        <h1 className="text-3xl font-semibold">{Title}</h1>
+                        <p className="text-gray-400 mt-2">{Description}</p>
+                        <div className="mt-4 flex items-center text-gray-400">
+                            <span className="text-sm">Published on {formattedDate}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
