@@ -11,7 +11,7 @@ async function fetchBlog() {
 
   try {
     const res = await fetch(
-      `http://127.0.0.1:1337/api/headers?populate=*`,
+      `https://strapi-blog-backend-ndrb.onrender.com/api/headers?populate=*`,
       options
     );
     const response = await res.json();
@@ -55,7 +55,7 @@ const page = async () => {
               objectFit="cover"
               src={
                 HeaderImage?.formats?.large?.url
-                  ? `http://127.0.0.1:1337${HeaderImage.formats.large.url}`
+                  ? `https://strapi-blog-backend-ndrb.onrender.com${HeaderImage.formats.large.url}`
                   : "/placeholder-image.jpg" // Add a default placeholder if image is missing
               }
               alt={Title || "Blog Image"}

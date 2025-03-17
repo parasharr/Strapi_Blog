@@ -9,7 +9,7 @@ async function fetchBlog(id) {
         },
     };
     try {
-        const url = `http://127.0.0.1:1337/api/blogs?filters[id][$eq]=${id}&populate=*`;
+        const url = `https://strapi-blog-backend-ndrb.onrender.com/api/blogs?filters[id][$eq]=${id}&populate=*`;
         const res = await fetch(url, options);
         if (!res.ok) {
             throw new Error(`Error: ${res.status} ${res.statusText}`);
@@ -60,9 +60,9 @@ export default async function Page({ params }) {
     // Handle image path based on response structure
     let imageUrl = "/placeholder-image.jpg";
     if (BlogImage?.data?.attributes?.formats?.large?.url) {
-        imageUrl = `http://127.0.0.1:1337${BlogImage.data.attributes.formats.large.url}`;
+        imageUrl = `https://strapi-blog-backend-ndrb.onrender.com${BlogImage.data.attributes.formats.large.url}`;
     } else if (BlogImage?.formats?.large?.url) {
-        imageUrl = `http://127.0.0.1:1337${BlogImage.formats.large.url}`;
+        imageUrl = `https://strapi-blog-backend-ndrb.onrender.com${BlogImage.formats.large.url}`;
     }
     
     return (

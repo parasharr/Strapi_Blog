@@ -10,7 +10,7 @@ async function fetchPopular(id) {
     };
     
     try {
-        const url = `http://127.0.0.1:1337/api/populars?filters[id][$eq]=${id}&populate=*`;
+        const url = `https://strapi-blog-backend-ndrb.onrender.com/api/populars?filters[id][$eq]=${id}&populate=*`;
         const res = await fetch(url, options);
         if (!res.ok) {
             throw new Error(`Error: ${res.status} ${res.statusText}`);
@@ -61,9 +61,9 @@ export default async function Page({ params }) {
     // Handle image path based on response structure
     let imageUrl = "/placeholder-image.jpg";
     if (PopularImage?.data?.attributes?.formats?.large?.url) {
-        imageUrl = `http://127.0.0.1:1337${PopularImage.data.attributes.formats.large.url}`;
+        imageUrl = `https://strapi-blog-backend-ndrb.onrender.com${PopularImage.data.attributes.formats.large.url}`;
     } else if (PopularImage?.formats?.large?.url) {
-        imageUrl = `http://127.0.0.1:1337${PopularImage.formats.large.url}`;
+        imageUrl = `https://strapi-blog-backend-ndrb.onrender.com${PopularImage.formats.large.url}`;
     }
     
     return (
