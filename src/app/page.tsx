@@ -10,7 +10,7 @@ async function fetchHeader() {
   }
 
   try {
-    const res = await fetch("http://127.0.0.1:1337/api/headers?populate=*", options);
+    const res = await fetch("https://strapi-blog-backend-ndrb.onrender.com/api/headers?populate=*", options);
     const response = await res.json();
     return response;
   } catch (error) {
@@ -26,7 +26,7 @@ async function fetchPopular() {
   }
 
   try {
-    const res = await fetch("http://127.0.0.1:1337/api/populars?populate=*", options);
+    const res = await fetch("https://strapi-blog-backend-ndrb.onrender.com/api/populars?populate=*", options);
     const response = await res.json();
     return response;
   } catch (error) {
@@ -42,7 +42,7 @@ async function fetchBlogs() {
   }
 
   try {
-    const res = await fetch("http://127.0.0.1:1337/api/blogs?populate=*", options);
+    const res = await fetch("https://strapi-blog-backend-ndrb.onrender.com/api/blogs?populate=*", options);
     const response = await res.json();
     return response;
   } catch (error) {

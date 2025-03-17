@@ -24,7 +24,7 @@ interface BlogsProps {
 }
 
 const Blogs = ({ blogs }: BlogsProps) => {
-    const baseUrl = "http://127.0.0.1:1337"; // Strapi base URL
+    const baseUrl = "https://strapi-blog-backend-ndrb.onrender.com"; // Strapi base URL
 
     return (
         <div className="text-white mt-20">

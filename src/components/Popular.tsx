@@ -41,7 +41,7 @@ const PopularList = async ({ popular }: PopularListProps) => {
                         );
 
                         const imageUrl = PopularImage?.formats?.thumbnail?.url
-                            ? `http://127.0.0.1:1337${PopularImage.formats.thumbnail.url}`
+                            ? `https://strapi-blog-backend-ndrb.onrender.com${PopularImage.formats.thumbnail.url}`
                             : "/placeholder-image.jpg";
 
                         return (
