@@ -23,13 +23,6 @@ interface PopularListProps {
 }
 
 const PopularList = async ({ popular }: PopularListProps) => {
-    if (!popular || popular.data.length === 0) {
-        return (
-            <div className="bg-black h-screen text-white flex justify-center items-center">
-                <p>Unable to load popular data.</p>
-            </div>
-        );
-    }
 
     return (
         <div className="text-white">
