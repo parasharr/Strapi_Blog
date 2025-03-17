@@ -1,29 +1,21 @@
 import Image from "next/image";
 import Link from "next/link";
 
-// Define the type for the dynamic route params
-interface Params {
-    id: string; // Dynamic route segment is always a string
-}
-
 // Function to fetch blog data by ID
-async function fetchBlog(id: number) {
+async function fetchBlog(id) {
     const options = {
         headers: {
-            Authorization: `Bearer ${process.env.API_TOKEN}`, // Ensure your API token is valid
+            Authorization: `Bearer ${process.env.API_TOKEN}`,
         },
     };
-
     try {
         const url = `http://127.0.0.1:1337/api/blogs?filters[id][$eq]=${id}&populate=*`;
         const res = await fetch(url, options);
-
         if (!res.ok) {
             throw new Error(`Error: ${res.status} ${res.statusText}`);
         }
-
         const response = await res.json();
-        return response.data[0]; // Return the first matching object
+        return response.data[0];
     } catch (error) {
         console.error("Failed to fetch blog:", error);
         return null;
@@ -31,10 +23,10 @@ async function fetchBlog(id: number) {
 }
 
 // Dynamic Page Component
-const Page = async ({ params }: Awaited<{ params: Params }>) => {
+export default async function Page({ params }) {
     const { id } = params;
     const numericId = Number(id);
-
+    
     if (!Number.isInteger(numericId)) {
         return (
             <div className="bg-black h-screen text-white flex justify-center items-center">
@@ -42,9 +34,9 @@ const Page = async ({ params }: Awaited<{ params: Params }>) => {
             </div>
         );
     }
-
+    
     const blog = await fetchBlog(numericId);
-
+    
     if (!blog) {
         return (
             <div className="bg-black h-screen text-white flex justify-center items-center">
@@ -52,10 +44,11 @@ const Page = async ({ params }: Awaited<{ params: Params }>) => {
             </div>
         );
     }
-
-    const { Title, Date: blogDate, Description, BlogImage } = blog;
-
-    // Format the blog date
+    
+    // Handle different possible Strapi response structures
+    const blogData = blog.attributes || blog;
+    const { Title, Date: blogDate, Description, BlogImage } = blogData;
+    
     const formattedDate = blogDate
         ? new Date(blogDate).toLocaleDateString("en-US", {
               year: "numeric",
@@ -63,28 +56,30 @@ const Page = async ({ params }: Awaited<{ params: Params }>) => {
               day: "numeric",
           })
         : "Date not available";
-
-    // Prepare the blog image URL
-    const imageUrl = BlogImage?.formats?.large?.url
-        ? `http://127.0.0.1:1337${BlogImage.formats.large.url}`
-        : "/placeholder-image.jpg";
-
+    
+    // Handle image path based on response structure
+    let imageUrl = "/placeholder-image.jpg";
+    if (BlogImage?.data?.attributes?.formats?.large?.url) {
+        imageUrl = `http://127.0.0.1:1337${BlogImage.data.attributes.formats.large.url}`;
+    } else if (BlogImage?.formats?.large?.url) {
+        imageUrl = `http://127.0.0.1:1337${BlogImage.formats.large.url}`;
+    }
+    
     return (
-        <div className="bg-[#090017] h-screen text-white">
+        <div className="bg-[#090017] min-h-screen text-white">
             <div className="max-w-3xl mx-auto p-4">
-                <Link href="/" className="text-xl mt-10">
+                <Link href="/" className="text-xl mt-10 inline-block">
                     {"< Back"}
                 </Link>
-
                 <div className="relative w-full h-96 overflow-hidden rounded-lg mt-5">
                     <Image
                         src={imageUrl}
-                        layout="fill"
-                        objectFit="cover"
+                        fill
+                        className="object-cover"
                         alt={Title || "Blog Image"}
+                        priority
                     />
                 </div>
-
                 <div className="mt-4">
                     <h1 className="text-3xl font-semibold">{Title}</h1>
                     <p className="text-gray-400 mt-2">{Description}</p>
@@ -95,6 +90,4 @@ const Page = async ({ params }: Awaited<{ params: Params }>) => {
             </div>
         </div>
     );
-};
-
-export default Page;
+}

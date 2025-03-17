@@ -1,6 +1,6 @@
-import Blogs from "@/components/Blogs";
-import Header from "@/components/Header";
-import Popular from "@/components/Popular";
+import Blogs from "../components/Blogs";
+import Header from "../components/Header";
+import Popular from "../components/Popular";
 
 async function fetchHeader() {
   const options = {
